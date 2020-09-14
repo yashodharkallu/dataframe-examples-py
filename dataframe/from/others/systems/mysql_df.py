@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 import yaml
 import os.path
-import src.utils.aws_utils as ut
+import utils.aws_utils as ut
 
 if __name__ == '__main__':
 
@@ -10,33 +10,34 @@ if __name__ == '__main__':
     )
 
     # Create the SparkSession
-    sparkSession = SparkSession \
+    spark = SparkSession \
         .builder \
         .appName("Read from enterprise applications") \
         .master('local[*]') \
         .getOrCreate()
 
+    spark.sparkContext.setLogLevel('ERROR')
     current_dir = os.path.abspath(os.path.dirname(__file__))
-    appConfigFilePath = os.path.abspath(current_dir + "/../../../../"+"application.yml")
+    appConfigFilePath = os.path.abspath(current_dir + "/../../../../" + "application.yml")
 
     with open(appConfigFilePath) as conf:
-        doc = yaml.load(conf,Loader=yaml.FullLoader)
+        doc = yaml.load(conf, Loader=yaml.FullLoader)
 
-    #dbtable" : "(select a, b, c from testdb.TRANSACTIONSYNC where some_cond) as t"
-    jdbcParams = {  "url": ut.getMysqlJdbcUrl(doc),
-                    "lowerBound" : "1",
-                    "upperBound" : "100",
-                    "dbtable" : "IRMSDB.TRANSACTIONSYNC",
-                    "numPartitions" :"2",
-                    "partitionColumn" :"App_Transaction_Id",
-                    "user" : doc["mysql_conf"]["username"],
-                    "password" : doc["mysql_conf"]["password"]
-                }
+    # dbtable" : "(select a, b, c from testdb.TRANSACTIONSYNC where some_cond) as t"
+    jdbcParams = {"url": ut.get_mysql_jdbc_url(doc),
+                  "lowerBound" : "1",
+                  "upperBound" : "100",
+                  "dbtable" : "IRMSDB.TRANSACTIONSYNC",
+                  "numPartitions" :"2",
+                  "partitionColumn" :"App_Transaction_Id",
+                  "user" : doc["mysql_conf"]["username"],
+                  "password" : doc["mysql_conf"]["password"]
+                  }
     print(jdbcParams)
 
     #use the ** operator/un-packer to treat a python dictionary as **kwargs
     print("\nReading data from MySQL DB using SparkSession.read.format(),")
-    txnDF = sparkSession\
+    txnDF = spark\
         .read.format("jdbc")\
         .option("driver", "com.mysql.cj.jdbc.Driver")\
         .options(**jdbcParams)\

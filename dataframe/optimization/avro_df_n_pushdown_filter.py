@@ -7,7 +7,7 @@ import yaml
 
 if __name__ == '__main__':
     # Create the SparkSession
-    sparkSession = SparkSession \
+    spark = SparkSession \
         .builder \
         .appName("Read Files") \
         .master('local[*]') \
@@ -17,21 +17,22 @@ if __name__ == '__main__':
     # Reading without com.databricks.spark.avro
     # Apache Avro as a Built-in Data Source in Apache Spark 2.4
 
+    spark.sparkContext.setLogLevel('ERROR')
     current_dir = os.path.abspath(os.path.dirname(__file__))
-    appConfigFilePath = os.path.abspath(current_dir + "/../../../"+"application.yml")
+    app_config_file_path = os.path.abspath(current_dir + "/../../../" + "application.yml")
 
-    with open(appConfigFilePath) as conf:
+    with open(app_config_file_path) as conf:
         doc = yaml.load(conf, Loader=yaml.FullLoader)
 
     # Setup spark to use s3
-    hadoop_conf = sparkSession.sparkContext._jsc.hadoopConfiguration()
+    hadoop_conf = spark.sparkContext._jsc.hadoopConfiguration()
     hadoop_conf.set("fs.s3.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
     hadoop_conf.set("fs.s3a.access.key", doc["s3_conf"]["access_key"])
     hadoop_conf.set("fs.s3a.secret.key", doc["s3_conf"]["secret_access_key"])
     hadoop_conf.set("fs.s3a.endpoint", "s3-eu-west-1.amazonaws.com")
 
     print("\nCreating DF from csv and write as avro 'SparkSession.read.format(csv)")
-    finSchema = StructType()\
+    fin_schema = StructType()\
         .add("id", IntegerType(), True)\
         .add("has_debt", BooleanType(), True)\
         .add("has_financial_dependents", BooleanType(), True)\
@@ -39,24 +40,24 @@ if __name__ == '__main__':
         .add("income", DoubleType(), True)
 
     print("\n Check Pushdown filter for CSV")
-    finDf = sparkSession.read\
+    fin_df = spark.read\
         .option("header", "false")\
         .option("delimiter", ",")\
         .format("csv")\
-        .schema(finSchema)\
+        .schema(fin_schema)\
         .load("s3a://" + doc["s3_conf"]["s3_bucket"] + "/finances.csv")
 
-    csvExplianPlan = finDf.select("id", "income").filter("has_debt=true")
-    print(csvExplianPlan.explain()) # explain(True)
+    csv_explain_plan = fin_df.select("id", "income").filter("has_debt=true")
+    print(csv_explain_plan.explain()) # explain(True)
 
-    finDf\
+    fin_df\
         .write\
         .format("avro")\
         .mode("overwrite")\
-        .save("s3a://"+doc["s3_conf"]["s3_bucket"]+"/finAvro")
+        .save("s3a://"+doc["s3_conf"]["s3_bucket"] + "/finAvro")
 
     print("\n Check Pushdown filter for Avro")
-    finAvroDF = sparkSession\
+    finAvroDF = spark\
         .read\
         .format("avro")\
         .load("s3a://"+doc["s3_conf"]["s3_bucket"]+"/finAvro")

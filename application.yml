@@ -1,7 +1,7 @@
 s3_conf:
-  access_key: abc
-  secret_access_key: abc
-  s3_bucket: abc
+  access_key: AKIA3PH6MZWSMHNNDWFT
+  secret_access_key: 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
+  s3_bucket: aws-logs-788660014500-eu-west-1
 
 sftp_conf:
     hostname: xyz.amazonaws.com

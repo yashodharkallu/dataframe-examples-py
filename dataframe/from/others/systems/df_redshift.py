@@ -30,17 +30,27 @@ if __name__ == '__main__':
     hadoop_conf.set("fs.s3a.secret.key", doc["s3_conf"]["secret_access_key"])
     hadoop_conf.set("fs.s3a.endpoint", "s3-eu-west-1.amazonaws.com")
 
-    print("Reading txn_fact table from AWS Redshift and creating Dataframe,")
-
-    jdbcUrl = ut.getRedshiftJdbcUrl(doc)
-    print(jdbcUrl)
+    print("\nCreating Dataframe from txn_fact dataset,")
     txnDf = sparkSession.read\
-        .format("io.github.spark_redshift_community.spark.redshift")\
-        .option("url", jdbcUrl) \
-        .option("dbtable", "PUBLIC.TXN_FCT") \
-        .option("forward_spark_s3_credentials", "true")\
-        .option("tempdir", "s3a://"+doc["s3_conf"]["s3_bucket"]+"/temp")\
-        .load()
+        .option("header","true")\
+        .option("delimiter", "|")\
+        .csv("s3a://"+doc["s3_conf"]["s3_bucket"]+"/txn_fct.csv")
 
     txnDf.show(5,False)
+
+    print("Writing txn_fact dataframe to AWS Redshift Table   >>>>>>>")
+
+    jdbcUrl = ut.get_redshift_jdbc_url(doc)
+    print(jdbcUrl)
+
+    txnDf.write\
+        .format("io.github.spark_redshift_community.spark.redshift") \
+        .option("url", jdbcUrl) \
+        .option("tempdir", "s3a://"+doc["s3_conf"]["s3_bucket"]+"/temp") \
+        .option("forward_spark_s3_credentials", "true") \
+        .option("dbtable", "PUBLIC.TXN_FCT") \
+        .mode("overwrite")\
+        .save()
+
+    print("Completed   <<<<<<<<<")
 
