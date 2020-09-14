@@ -1,7 +1,7 @@
 s3_conf:
-  access_key: ABC
-  secret_access_key: ABC
-  s3_bucket: ABC
+  access_key: abc
+  secret_access_key: abc
+  s3_bucket: abc
 
 sftp_conf:
     hostname: xyz.amazonaws.com
@@ -29,8 +29,8 @@ redshift_conf:
   delimiter: |
 
 mysql_conf:
-  hostname: abc.com
+  hostname: testdb.cklf8rrrcwa3.eu-west-1.rds.amazonaws.com
   port: 3306
-  database: IRMSDB
-  username: admin
-  password: yui
+  database: testdb
+  username: master
+  password: Temp1234
