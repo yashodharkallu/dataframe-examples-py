@@ -1,8 +1,7 @@
-from pyspark.sql import SparkSession,Row,Window
-from pyspark.sql.types import StructType, IntegerType, BooleanType,DoubleType
+from pyspark.sql import SparkSession, Row, Window
 import os.path
 import yaml
-from src.model.Product import Product
+from model.Product import Product
 
 if __name__ == '__main__':
 
@@ -11,30 +10,32 @@ if __name__ == '__main__':
     )
 
     # Create the SparkSession
-    sparkSession = SparkSession \
+    spark = SparkSession \
         .builder \
         .appName("DSL examples") \
         .master('local[*]') \
         .getOrCreate()
+    spark.sparkContext.setLogLevel('ERROR')
 
     current_dir = os.path.abspath(os.path.dirname(__file__))
-    appConfigFilePath = os.path.abspath(current_dir + "/../../../"+"application.yml")
+    app_config_path = os.path.abspath(current_dir + "/../../../" + "application.yml")
+    app_secrets_path = os.path.abspath(current_dir + "/../../../" + ".secrets")
 
-    with open(appConfigFilePath) as conf:
-        doc = yaml.load(conf,Loader=yaml.FullLoader)
+    conf = open(app_config_path)
+    app_conf = yaml.load(conf, Loader=yaml.FullLoader)
+    secret = open(app_secrets_path)
+    app_secret = yaml.load(secret, Loader=yaml.FullLoader)
 
     # Setup spark to use s3
-    hadoop_conf = sparkSession.sparkContext._jsc.hadoopConfiguration()
-    hadoop_conf.set("fs.s3.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
-    hadoop_conf.set("fs.s3a.access.key", doc["s3_conf"]["access_key"])
-    hadoop_conf.set("fs.s3a.secret.key", doc["s3_conf"]["secret_access_key"])
-    hadoop_conf.set("fs.s3a.endpoint", "s3-eu-west-1.amazonaws.com")
+    hadoop_conf = spark.sparkContext._jsc.hadoopConfiguration()
+    hadoop_conf.set("fs.s3a.access.key", app_secret["s3_conf"]["access_key"])
+    hadoop_conf.set("fs.s3a.secret.key", app_secret["s3_conf"]["secret_access_key"])
 
-    finFilePath = "s3a://"+doc["s3_conf"]["s3_bucket"]+"/finances-small"
-    financeDf = sparkSession.read.parquet(finFilePath)
+    finFilePath = "s3a://" + app_conf["s3_conf"]["s3_bucket"]+"/finances-small"
+    financeDf = spark.read.parquet(finFilePath)
     financeDf.createOrReplaceTempView("raw_finances")
 
-    sparkSession.sql("""
+    spark.sql("""
           select
             AccountNumber,
             Amount,
@@ -47,7 +48,7 @@ if __name__ == '__main__':
 
     financeDf.printSchema()
 
-    sparkSession.sql("""
+    spark.sql("""
           select
             AccountNumber,
             Amount,
@@ -57,9 +58,9 @@ if __name__ == '__main__':
           from
             finances
           """)\
-        .show(5,False)
+        .show(5, False)
 
-    #Row can be used as case class in pyspark
+    # Row can be used as case class in pyspark
     productList = [
         Row(product="Thin",category= "Cell phone",revenue=6000),
         Row(product="Normal", category= "Tablet", revenue=1500),
@@ -85,14 +86,14 @@ if __name__ == '__main__':
         Product("Pro", "Tablet", 4500),
         Product("Pro2", "Tablet", 6500)
     ]
-    products = sparkSession.createDataFrame(productList1)
+    products = spark.createDataFrame(productList1)
     products.createOrReplaceTempView("products")
     products.printSchema()
 
     catRevenueWindowSpec = Window.partitionBy("category")\
         .orderBy("revenue")
 
-    sparkSession.sql("""
+    spark.sql("""
             select
               product,
               category,
@@ -105,14 +106,4 @@ if __name__ == '__main__':
              from
               products
           """)\
-        .show(5,False)
-
-#    sparkSession\
-#        .sql("""
-#                    select
-#                      *,
-#                      window(Date, '30 days', '15 minutes')
-#                    from
-#                      finances
-#              """)\
-#        .show(5,False)
+        .show(5, False)
