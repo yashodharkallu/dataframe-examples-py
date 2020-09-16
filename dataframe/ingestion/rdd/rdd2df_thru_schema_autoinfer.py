@@ -13,19 +13,20 @@ if __name__ == '__main__':
 
     spark.sparkContext.setLogLevel("ERROR")
     current_dir = os.path.abspath(os.path.dirname(__file__))
-    appConfigFilePath = os.path.abspath(current_dir + "/../../../" + "application.yml")
+    app_config_path = os.path.abspath(current_dir + "/../../../" + "application.yml")
+    app_secrets_path = os.path.abspath(current_dir + "/../../../" + ".secrets")
 
-    with open(appConfigFilePath) as conf:
-        doc = yaml.load(conf, Loader=yaml.FullLoader)
+    conf = open(app_config_path)
+    app_conf = yaml.load(conf, Loader=yaml.FullLoader)
+    secret = open(app_secrets_path)
+    app_secret = yaml.load(secret, Loader=yaml.FullLoader)
 
     # Setup spark to use s3
     hadoop_conf=spark.sparkContext._jsc.hadoopConfiguration()
-    hadoop_conf.set("fs.s3.impl","org.apache.hadoop.fs.s3a.S3AFileSystem")
-    hadoop_conf.set("fs.s3a.access.key", doc["s3_conf"]["access_key"])
-    hadoop_conf.set("fs.s3a.secret.key", doc["s3_conf"]["secret_access_key"])
-    hadoop_conf.set('fs.s3a.endpoint', 's3.eu-west-1.amazonaws.com')
+    hadoop_conf.set("fs.s3a.access.key", app_secret["s3_conf"]["access_key"])
+    hadoop_conf.set("fs.s3a.secret.key", app_secret["s3_conf"]["secret_access_key"])
 
-    txn_fct_rdd = spark.sparkContext.textFile("s3a://" + doc["s3_conf"]["s3_bucket"] + "/txn_fct.csv") \
+    txn_fct_rdd = spark.sparkContext.textFile("s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/txn_fct.csv") \
         .filter(lambda record: record.find("txn_id")) \
         .map(lambda record: record.split("|")) \
         .map(lambda record: (int(record[0]), record[1], float(record[2]), record[3], record[4], record[5], record[6]))

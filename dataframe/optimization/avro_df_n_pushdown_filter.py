@@ -31,7 +31,7 @@ if __name__ == '__main__':
     hadoop_conf.set("fs.s3a.secret.key", doc["s3_conf"]["secret_access_key"])
     hadoop_conf.set("fs.s3a.endpoint", "s3-eu-west-1.amazonaws.com")
 
-    print("\nCreating DF from csv and write as avro 'SparkSession.read.format(csv)")
+    print("\nCreating DF ingestion csv and write as avro 'SparkSession.read.format(csv)")
     fin_schema = StructType()\
         .add("id", IntegerType(), True)\
         .add("has_debt", BooleanType(), True)\
