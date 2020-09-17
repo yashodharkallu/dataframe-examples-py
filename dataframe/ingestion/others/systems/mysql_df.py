@@ -35,10 +35,10 @@ if __name__ == '__main__':
                   "user": app_secret["mysql_conf"]["username"],
                   "password": app_secret["mysql_conf"]["password"]
                   }
-    print(jdbcParams)
+    # print(jdbcParams)
 
     # use the ** operator/un-packer to treat a python dictionary as **kwargs
-    print("\nReading data ingestion MySQL DB using SparkSession.read.format(),")
+    print("\nReading data from MySQL DB using SparkSession.read.format(),")
     txnDF = spark\
         .read.format("jdbc")\
         .option("driver", "com.mysql.cj.jdbc.Driver")\
