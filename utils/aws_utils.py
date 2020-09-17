@@ -11,7 +11,7 @@ def get_redshift_jdbc_url(redshift_config: dict):
     print(username)
     print(password)
     print('jdbc:redshift://{}'.format(host))
-    return f"jdbc:redshift://{host}:{port}/{database}?user={username}&password={password}"
+    return "jdbc:redshift://{}:{}/{}?user={}&password={}".format(host, port, database, username, password)
 
 
 def get_mysql_jdbc_url(mysql_config: dict):
