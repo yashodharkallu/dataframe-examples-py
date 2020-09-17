@@ -10,7 +10,7 @@ def get_redshift_jdbc_url(redshift_config: dict):
     print(database)
     print(username)
     print(password)
-    print(f'jdbc:redshift://{host}')
+    print(f'jdbc:redshift://{}'.format(host))
     return f"jdbc:redshift://{host}:{port}/{database}?user={username}&password={password}"
 
 
