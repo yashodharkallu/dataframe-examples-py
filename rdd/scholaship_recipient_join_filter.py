@@ -2,7 +2,6 @@ from pyspark.sql import SparkSession, Row
 from distutils.util import strtobool
 import os.path
 import yaml
-import sys
 
 if __name__ == '__main__':
 

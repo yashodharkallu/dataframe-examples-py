@@ -24,6 +24,7 @@ export PATH=$SCALA_HOME/bin:$PATH
 export SPARK_HOME=/usr/local/scala/spark-2.4.5-bin-hadoop2.7
 export PATH=$SPARK_HOME/bin:$PATH
 export PYSPARK_PYTHON=python3
+export PYSPARK_DRIVER_PYTHON=python3
 
 source ~/.bashrc
 

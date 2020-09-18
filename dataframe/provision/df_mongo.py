@@ -25,6 +25,7 @@ if __name__ == '__main__':
         .config("spark.mongodb.input.uri", app_secret["mongodb_config"]["uri"])\
         .config("spark.mongodb.output.uri", app_secret["mongodb_config"]["uri"])\
         .getOrCreate()
+    spark.sparkContext.setLogLevel('ERROR')
 
     students = spark.createDataFrame(
     spark.sparkContext.parallelize(
