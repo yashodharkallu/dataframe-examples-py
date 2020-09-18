@@ -132,4 +132,3 @@ dmypy.json
 .secrets
 *.pem
 *.ppk
-emr_using_lambda.txt
