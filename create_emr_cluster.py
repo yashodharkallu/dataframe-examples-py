@@ -6,9 +6,9 @@ def lambda_handler(event, context):
     client = boto3.client('emr',  region_name="eu-west-1")
 
     instances = {
-        'MasterInstanceType': 'm3.2xlarge',
-        'SlaveInstanceType': 'm3.2xlarge',
-        'InstanceCount': 1,
+        'MasterInstanceType': 'm3.xlarge',
+        'SlaveInstanceType': 'm3.xlarge',
+        'InstanceCount': 2,
         'InstanceGroups': [],
         'Ec2KeyName': 'spark',
         'KeepJobFlowAliveWhenNoSteps': True,
