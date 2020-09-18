@@ -56,6 +56,6 @@ def lambda_handler(event, context):
         ServiceRole='EMR_DefaultRole',
         JobFlowRole='EMR_EC2_DefaultRole',
         AutoScalingRole='EMR_AutoScaling_DefaultRole',
-        EbsRootVolumeSize=20
+        EbsRootVolumeSize=30
     )
     return response["JobFlowId"]
