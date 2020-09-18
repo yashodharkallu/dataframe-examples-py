@@ -75,3 +75,5 @@ if __name__ == '__main__':
         .withColumnRenamed("approx_count_distinct(status)", "dist_status_count")
 
     txnAggDf.show(5, False)
+
+# spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/ingestion/rdd/rdd2df_thru_explicit_schema.py

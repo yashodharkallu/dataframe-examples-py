@@ -22,7 +22,7 @@ if __name__ == '__main__':
     app_secret = yaml.load(secret, Loader=yaml.FullLoader)
 
     # Setup spark to use s3
-    hadoop_conf=spark.sparkContext._jsc.hadoopConfiguration()
+    hadoop_conf = spark.sparkContext._jsc.hadoopConfiguration()
     hadoop_conf.set("fs.s3a.access.key", app_secret["s3_conf"]["access_key"])
     hadoop_conf.set("fs.s3a.secret.key", app_secret["s3_conf"]["secret_access_key"])
 
@@ -49,3 +49,5 @@ if __name__ == '__main__':
     txnDfWithColName = txn_fct_rdd.toDF(["txn_id", "created_time_string", "amount", "cust_id", "status", "merchant_id", "created_time_ist"])
     txnDfWithColName.printSchema()
     txnDfWithColName.show(5, False)
+
+# spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/ingestion/rdd/rdd2df_thru_schema_autoinfer.py

@@ -32,3 +32,5 @@ if __name__ == '__main__':
         .load(app_conf["sftp_conf"]["directory"] + "/receipts_delta_GBR_14_10_2017.csv")
 
     olTxnDf.show(5, False)
+
+# spark-submit --packages "com.springml:spark-sftp_2.11:1.1.1" dataframe/ingestion/others/systems/sftp_df.py

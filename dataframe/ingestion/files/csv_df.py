@@ -69,3 +69,5 @@ if __name__ == '__main__':
         .csv("s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/fin")
 
     spark.stop()
+
+# spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/ingestion/files/csv_df.py
