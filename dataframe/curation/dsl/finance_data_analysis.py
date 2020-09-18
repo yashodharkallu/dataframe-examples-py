@@ -87,3 +87,5 @@ if __name__ == '__main__':
                       .when(col("company") == "OldCo", "Legacy")
                       .otherwise("Standard").alias("Tier"))\
                 .show(5, False)
+
+# spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/curation/dsl/finance_data_analysis.py

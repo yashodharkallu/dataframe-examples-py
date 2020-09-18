@@ -61,3 +61,5 @@ if __name__ == '__main__':
     corrected_people_df \
         .filter(~lower(col("jobType")).isin("chemical engineer", "teacher")) \
         .show()
+
+# spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/curation/dsl/more_functions.py

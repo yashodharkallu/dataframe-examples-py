@@ -1,5 +1,4 @@
-from pyspark.sql import SparkSession, Row, functions
-from pyspark.sql.types import StructType, IntegerType, BooleanType,DoubleType
+from pyspark.sql import SparkSession
 import os.path
 import yaml
 
@@ -42,30 +41,30 @@ if __name__ == '__main__':
 
     spark.sql("select concat_ws(' - ', AccountNumber, Description) as AccountDetails from finances").show(5, False)
 
-    aggFinanceDf = spark.sql("""
+    agg_finance_df = spark.sql("""
         select
-        AccountNumber,
-        sum(Amount) as TotalTransaction,
-        count(Amount) as NumberOfTransaction,
-        max(Amount) as MaxTransaction,
-        min(Amount) as MinTransaction,
-        collect_set(Description) as UniqueTransactionDescriptions
+            AccountNumber,
+            sum(Amount) as TotalTransaction,
+            count(Amount) as NumberOfTransaction,
+            max(Amount) as MaxTransaction,
+            min(Amount) as MinTransaction,
+            collect_set(Description) as UniqueTransactionDescriptions
         from
-        finances
+            finances
         group by
-        AccountNumber
+            AccountNumber
         """)
 
-    aggFinanceDf.show(5, False)
-    aggFinanceDf.createOrReplaceTempView("agg_finances")
+    agg_finance_df.show(5, False)
+    agg_finance_df.createOrReplaceTempView("agg_finances")
 
     spark.sql(app_conf["spark_sql_demo"]["agg_demo"]) \
         .show(5, False)
 
-    companiesDF = spark.read.json("s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/company.json")
-    companiesDF.createOrReplaceTempView("companies")
-    companiesDF.show(5,False)
-    companiesDF.printSchema()
+    companies_df = spark.read.json("s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/company.json")
+    companies_df.createOrReplaceTempView("companies")
+    companies_df.show(5, False)
+    companies_df.printSchema()
 
     employee_df_temp = spark.sql("select company, explode(employees) as employee from companies")
     employee_df_temp.show()
@@ -76,4 +75,4 @@ if __name__ == '__main__':
     spark.sql(app_conf["spark_sql_demo"]["case_when_demo"]) \
         .show(5, False)
 
-
+# spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/curation/sql/finance_data_analysis.py

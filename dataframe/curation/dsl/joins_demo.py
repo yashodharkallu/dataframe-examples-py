@@ -42,3 +42,5 @@ if __name__ == '__main__':
 
     # cross join
     emp_df.join(role_df, [emp_df["id"] == role_df["id"]], "cross").show()
+
+# spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/curation/dsl/joins_demo.py
