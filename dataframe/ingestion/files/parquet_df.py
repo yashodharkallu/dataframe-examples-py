@@ -64,7 +64,7 @@ if __name__ == '__main__':
     # Window functions
     window_spec = Window.partitionBy("OMOCreateDate")
     omo_daily_freq = nyc_omo_df \
-        .withColumn("OMODailyFreq", F.count("OMOID").over(window_spec).alias("OMODailyFreq"))
+        .withColumn("OMODailyFreq", F.count("OMOID").over(window_spec))
 
     print("# of partitions in window'ed OM dataframe = " + str(omo_daily_freq.count()))
     omo_daily_freq.show(5)

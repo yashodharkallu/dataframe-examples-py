@@ -26,7 +26,7 @@ if __name__ == '__main__':
     secret = open(app_secrets_path)
     app_secret = yaml.load(secret, Loader=yaml.FullLoader)
 
-    jdbcParams = {"url": ut.get_mysql_jdbc_url(app_secret),
+    jdbc_params = {"url": ut.get_mysql_jdbc_url(app_secret),
                   "lowerBound": "1",
                   "upperBound": "100",
                   "dbtable": app_conf["mysql_conf"]["dbtable"],
@@ -34,7 +34,7 @@ if __name__ == '__main__':
                   "partitionColumn": app_conf["mysql_conf"]["partition_column"],
                   "user": app_secret["mysql_conf"]["username"],
                   "password": app_secret["mysql_conf"]["password"]
-                  }
+                   }
     # print(jdbcParams)
 
     # use the ** operator/un-packer to treat a python dictionary as **kwargs
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     txnDF = spark\
         .read.format("jdbc")\
         .option("driver", "com.mysql.cj.jdbc.Driver")\
-        .options(**jdbcParams)\
+        .options(**jdbc_params)\
         .load()
 
     txnDF.show()

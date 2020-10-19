@@ -34,16 +34,16 @@ if __name__ == '__main__':
 
     print("Reading txn_fact table ingestion AWS Redshift and creating Dataframe,")
 
-    jdbcUrl = ut.get_redshift_jdbc_url(app_secret)
-    print(jdbcUrl)
-    txnDf = spark.read\
+    jdbc_url = ut.get_redshift_jdbc_url(app_secret)
+    print(jdbc_url)
+    txn_df = spark.read\
         .format("io.github.spark_redshift_community.spark.redshift")\
-        .option("url", jdbcUrl) \
+        .option("url", jdbc_url) \
         .option("query", app_conf["redshift_conf"]["query"]) \
         .option("forward_spark_s3_credentials", "true")\
         .option("tempdir", "s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/temp")\
         .load()
 
-    txnDf.show(5, False)
+    txn_df.show(5, False)
 
 # spark-submit --jars "https://s3.amazonaws.com/redshift-downloads/drivers/jdbc/1.2.36.1060/RedshiftJDBC42-no-awssdk-1.2.36.1060.jar" --packages "io.github.spark-redshift-community:spark-redshift_2.11:4.0.1,org.apache.spark:spark-avro_2.11:2.4.2,org.apache.hadoop:hadoop-aws:2.7.4" dataframe/ingestion/others/systems/redshift_df.py

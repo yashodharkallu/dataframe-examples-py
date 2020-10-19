@@ -10,8 +10,8 @@ if __name__ == '__main__':
         .master('local[*]') \
         .config('spark.jars.packages', 'com.springml:spark-sftp_2.11:1.1.1') \
         .getOrCreate()
-
     spark.sparkContext.setLogLevel('ERROR')
+
     current_dir = os.path.abspath(os.path.dirname(__file__))
     app_config_path = os.path.abspath(current_dir + "/../../../../" + "application.yml")
     app_secrets_path = os.path.abspath(current_dir + "/../../../../" + ".secrets")
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     secret = open(app_secrets_path)
     app_secret = yaml.load(secret, Loader=yaml.FullLoader)
 
-    olTxnDf=spark.read\
+    ol_txn_df = spark.read\
         .format("com.springml.spark.sftp")\
         .option("host", app_secret["sftp_conf"]["hostname"])\
         .option("port", app_secret["sftp_conf"]["port"])\
@@ -31,6 +31,6 @@ if __name__ == '__main__':
         .option("delimiter", "|")\
         .load(app_conf["sftp_conf"]["directory"] + "/receipts_delta_GBR_14_10_2017.csv")
 
-    olTxnDf.show(5, False)
+    ol_txn_df.show(5, False)
 
 # spark-submit --packages "com.springml:spark-sftp_2.11:1.1.1" dataframe/ingestion/others/systems/sftp_df.py

@@ -56,7 +56,7 @@ if __name__ == '__main__':
         .csv("s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/finances.csv") \
         .toDF("id", "has_debt", "has_financial_dependents", "has_student_loans", "income")
 
-    print("Number of partitions = " + str(fin_df.rdd.getNumPartitions))
+    print("Number of partitions = " + str(fin_df.rdd.getNumPartitions()))
     finance_df.printSchema()
     finance_df.show()
 

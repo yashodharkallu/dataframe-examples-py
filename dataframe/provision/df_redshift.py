@@ -34,21 +34,21 @@ if __name__ == '__main__':
     hadoop_conf.set("fs.s3a.secret.key", app_secret["s3_conf"]["secret_access_key"])
 
     print("\nCreating Dataframe ingestion txn_fact dataset,")
-    txnDf = spark.read\
+    txn_df = spark.read\
         .option("header", "true")\
         .option("delimiter", "|")\
         .csv("s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/txn_fct.csv")
 
-    txnDf.show(5, False)
+    txn_df.show(5, False)
 
     print("Writing txn_fact dataframe to AWS Redshift Table   >>>>>>>")
 
-    jdbcUrl = ut.get_redshift_jdbc_url(app_secret)
-    print(jdbcUrl)
+    jdbc_url = ut.get_redshift_jdbc_url(app_secret)
+    print(jdbc_url)
 
-    txnDf.coalesce(1).write\
+    txn_df.coalesce(1).write\
         .format("io.github.spark_redshift_community.spark.redshift") \
-        .option("url", jdbcUrl) \
+        .option("url", jdbc_url) \
         .option("tempdir", "s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/temp") \
         .option("forward_spark_s3_credentials", "true") \
         .option("dbtable", "PUBLIC.TXN_FCT") \
