@@ -71,7 +71,7 @@ if __name__ == '__main__':
         .show(5, False)
 
     companies_df = spark.read.json("s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/company.json")
-
+    print("Count = ", companies_df.count())
     companies_df.show(5, False)
     companies_df.printSchema()
 
