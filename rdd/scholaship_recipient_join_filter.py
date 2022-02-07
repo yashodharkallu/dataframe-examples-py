@@ -48,6 +48,8 @@ if __name__ == '__main__':
     for rec in join_pair_rdd.collect():
         print(rec)
 
+    print('---------------------')
+
     join_pair_rdd = join_pair_rdd.filter(lambda rec: (rec[1][0][2] == "Switzerland") and (rec[1][1][0] == 1) and (rec[1][1][1] == 1)) \
 
     join_pair_rdd.foreach(print)
