@@ -35,7 +35,7 @@ if __name__ == '__main__':
         .map(lambda lst: (int(lst[0]), (int(lst[1]), strtobool(lst[2]), lst[3], lst[4], strtobool(lst[5]), strtobool(lst[6]), int(lst[7]))))
 
     for rec in demographics_pair_rdd.collect():
-        print(res)
+        print(rec)
 
     finances_pair_rdd = finances_rdd \
         .map(lambda line: line.split(",")) \
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         .join(finances_pair_rdd) \
 
     for rec in join_pair_rdd.collect():
-        print(res)
+        print(rec)
 
     join_pair_rdd = join_pair_rdd.filter(lambda rec: (rec[1][0][2] == "Switzerland") and (rec[1][1][0] == 1) and (rec[1][1][1] == 1)) \
 
