@@ -54,11 +54,16 @@ if __name__ == '__main__':
     print('Participants belongs to \'Switzerland\', having debts, financial dependents and the course enrolled,')
     courses_rdd = spark.sparkContext.textFile("s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/course.csv")
     courses_pair_rdd = courses_rdd.map(lambda line: line.split(",")) \
-        .map(lambda lst: (int(lst[0]), lst[1])) \
+        .map(lambda lst: (int(lst[0]), lst[1]))
+
+    print('------------------------')
+
+    courses_pair_rdd.foreach(print)
 
     join_pair_rdd = join_pair_rdd \
-        .map(lambda rec: (rec[1][0][6], (rec[0], rec[1][0], rec[1][1]))) \
-        .join(courses_pair_rdd) \
+        .map(lambda rec: (rec[1][0][6], (rec[0], rec[1][0], rec[1][1])))
+
+    join_pair_rdd = join_pair_rdd.join(courses_pair_rdd) \
         .map(lambda rec: (rec[1][0][0], (rec[1][0][1], rec[1][0][2], rec[1][1])))
 
     join_pair_rdd.foreach(print)
