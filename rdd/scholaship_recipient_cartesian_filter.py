@@ -42,8 +42,10 @@ if __name__ == '__main__':
         .map(lambda line: line.split(",")) \
         .map(lambda lst: (int(lst[0]), strtobool(lst[1]), strtobool(lst[2]), strtobool(lst[3]), int(lst[4])))
 
-    join_pair_rdd = demographics_pair_rdd.cartesian(finances_pair_rdd)\
-        .filter(lambda rec: rec[0][0] == rec[1][0])  \
+    join_pair_rdd = demographics_pair_rdd.cartesian(finances_pair_rdd)
+    print('----------------------')
+
+    join_pair_rdd =join_pair_rdd.filter(lambda rec: rec[0][0] == rec[1][0])  \
         .filter(lambda rec: (rec[0][3] == "Switzerland") and (rec[1][1]) and (rec[1][2]))
 
     join_pair_rdd.foreach(print)
