@@ -63,6 +63,10 @@ if __name__ == '__main__':
     join_pair_rdd = join_pair_rdd \
         .map(lambda rec: (rec[1][0][6], (rec[0], rec[1][0], rec[1][1])))
 
+    print('------------------------')
+
+    join_pair_rdd.foreach(print)
+
     join_pair_rdd = join_pair_rdd.join(courses_pair_rdd) \
         .map(lambda rec: (rec[1][0][0], (rec[1][0][1], rec[1][0][2], rec[1][1])))
 
